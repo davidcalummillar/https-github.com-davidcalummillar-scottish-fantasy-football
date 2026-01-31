@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Scottish Fantasy Football</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <div id="loading" class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <p>Loading Scottish Fantasy Football...</p>
+        </div>
+
+        <div id="game-container" class="game-container hidden">
+            <!-- Ell's Section (Top) - Red themed -->
+            <div class="team-section team-top team-ell">
+                <div class="team-header">
+                    <div class="manager-card" id="ell-manager" data-player="Ell">
+                        <div class="manager-avatar"></div>
+                        <div class="manager-info">
+                            <span class="manager-name">Select Manager</span>
+                            <span class="manager-formation">-</span>
+                        </div>
+                    </div>
+                    <div class="chip-buttons">
+                        <button class="chip-btn chip-bb" id="ell-bb" data-player="Ell" data-chip="BB">BB</button>
+                        <button class="chip-btn chip-tc" id="ell-tc" data-player="Ell" data-chip="TC">TC</button>
+                        <button class="chip-btn chip-transfer" id="ell-tf" data-player="Ell" data-chip="TF">0</button>
+                    </div>
+                    <div class="team-stats">
+                        <div class="budget-display">
+                            <span class="budget-label">Budget</span>
+                            <span class="budget-value" id="ell-budget">£80m</span>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="clear-scores-btn" id="ell-clear" data-player="Ell">CLR</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bench-area" id="ell-bench">
+                    <div class="bench-slot" data-slot="BENCH1" data-player="Ell"></div>
+                    <div class="bench-slot" data-slot="BENCH2" data-player="Ell"></div>
+                    <div class="bench-slot" data-slot="BENCH3" data-player="Ell"></div>
+                    <div class="bench-slot" data-slot="BENCH4" data-player="Ell"></div>
+                </div>
+            </div>
+
+            <!-- Football Pitch -->
+            <div class="pitch">
+                <!-- Pitch Markings -->
+                <div class="pitch-halfway"></div>
+                <div class="pitch-centre-spot"></div>
+                <div class="pitch-box-top"></div>
+                <div class="pitch-goal-top"></div>
+                <div class="pitch-box-bottom"></div>
+                <div class="pitch-goal-bottom"></div>
+                <div class="pitch-corner-tl"></div>
+                <div class="pitch-corner-tr"></div>
+                <div class="pitch-corner-bl"></div>
+                <div class="pitch-corner-br"></div>
+
+                <!-- Ell's Half (top) -->
+                <div class="pitch-half pitch-top">
+                    <div class="pitch-row gk-row" id="ell-gk"></div>
+                    <div class="pitch-row def-row" id="ell-def"></div>
+                    <div class="pitch-row mfdf-row" id="ell-mfdf"></div>
+                    <div class="pitch-row fwmf-row" id="ell-fwmf"></div>
+                    <div class="pitch-row fwd-row" id="ell-fwd"></div>
+                </div>
+
+                <!-- Scoreboard -->
+                <div class="scoreboard">
+                    <div class="score-team">
+                        <span class="score-name">DAVID</span>
+                        <span class="score-value" id="david-score">0</span>
+                    </div>
+                    <span class="score-divider">-</span>
+                    <div class="score-team">
+                        <span class="score-value" id="ell-score">0</span>
+                        <span class="score-name">ELL</span>
+                    </div>
+                </div>
+
+                <!-- David's Half (bottom) -->
+                <div class="pitch-half pitch-bottom">
+                    <div class="pitch-row fwd-row" id="david-fwd"></div>
+                    <div class="pitch-row fwmf-row" id="david-fwmf"></div>
+                    <div class="pitch-row mfdf-row" id="david-mfdf"></div>
+                    <div class="pitch-row def-row" id="david-def"></div>
+                    <div class="pitch-row gk-row" id="david-gk"></div>
+                </div>
+            </div>
+
+            <!-- David's Section (Bottom) - Blue themed -->
+            <div class="team-section team-bottom team-david">
+                <div class="bench-area" id="david-bench">
+                    <div class="bench-slot" data-slot="BENCH1" data-player="David"></div>
+                    <div class="bench-slot" data-slot="BENCH2" data-player="David"></div>
+                    <div class="bench-slot" data-slot="BENCH3" data-player="David"></div>
+                    <div class="bench-slot" data-slot="BENCH4" data-player="David"></div>
+                </div>
+                <div class="team-header">
+                    <div class="manager-card" id="david-manager" data-player="David">
+                        <div class="manager-avatar"></div>
+                        <div class="manager-info">
+                            <span class="manager-name">Select Manager</span>
+                            <span class="manager-formation">-</span>
+                        </div>
+                    </div>
+                    <div class="chip-buttons">
+                        <button class="chip-btn chip-bb" id="david-bb" data-player="David" data-chip="BB">BB</button>
+                        <button class="chip-btn chip-tc" id="david-tc" data-player="David" data-chip="TC">TC</button>
+                        <button class="chip-btn chip-transfer" id="david-tf" data-player="David" data-chip="TF">0</button>
+                    </div>
+                    <div class="team-stats">
+                        <div class="budget-display">
+                            <span class="budget-label">Budget</span>
+                            <span class="budget-value" id="david-budget">£80m</span>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="clear-scores-btn" id="david-clear" data-player="David">CLR</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Modal -->
+        <div id="modal" class="modal hidden">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content"></div>
+        </div>
+    </div>
+
+    <script src="static/app.js"></script>
+</body>
+</html>

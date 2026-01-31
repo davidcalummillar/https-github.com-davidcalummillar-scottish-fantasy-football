@@ -305,8 +305,8 @@ body {
 }
 
 .bench-slot {
-    width: 70px;
-    height: 85px;
+    width: 80px;
+    height: 92px;
     background: rgba(0, 0, 0, 0.03);
     border: 2px dashed rgba(0, 0, 0, 0.15);
     border-radius: 12px;
@@ -572,8 +572,8 @@ body {
 
 /* === Player Slots === */
 .player-slot {
-    width: 68px;
-    height: 80px;
+    width: 82px;
+    height: 95px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -606,7 +606,7 @@ body {
 }
 
 .player-slot.empty .player-name {
-    font-size: 10px;
+    font-size: 11px;
     color: rgba(255, 255, 255, 0.6);
     text-transform: uppercase;
 }
@@ -614,14 +614,14 @@ body {
 /* Bench player text needs dark color on light background */
 .bench-slot .player-name {
     color: #333333;
-    font-size: 10px;
+    font-size: 11px;
     text-shadow: none;
 }
 
 /* === Shirt Container === */
 .shirt {
-    width: 56px;
-    height: 54px;
+    width: 66px;
+    height: 64px;
     position: relative;
     filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
 }
@@ -636,12 +636,12 @@ body {
     position: absolute;
     top: -4px;
     right: -4px;
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     background: linear-gradient(135deg, #ffd700, #ffaa00);
     color: #000;
     border-radius: 50%;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     display: flex;
     align-items: center;
@@ -662,9 +662,9 @@ body {
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.85);
     color: white;
-    padding: 2px 7px;
-    border-radius: 4px;
-    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 12px;
     font-weight: 600;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
@@ -675,11 +675,11 @@ body {
 
 /* Player Name */
 .player-name {
-    font-size: 10.5px;
+    font-size: 12px;
     font-weight: 600;
     text-align: center;
-    margin-top: 2px;
-    max-width: 72px;
+    margin-top: 3px;
+    max-width: 85px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1031,40 +1031,40 @@ body {
 /* === Responsive Adjustments === */
 @media (max-width: 360px) {
     .player-slot {
-        width: 56px;
-        height: 68px;
+        width: 68px;
+        height: 80px;
     }
 
     .shirt {
-        width: 46px;
-        height: 44px;
+        width: 54px;
+        height: 52px;
     }
 
     .player-name {
-        font-size: 9px;
-        max-width: 58px;
+        font-size: 10px;
+        max-width: 70px;
     }
 
     .bench-slot {
-        width: 65px;
-        height: 80px;
+        width: 70px;
+        height: 85px;
     }
 }
 
 @media (min-width: 500px) {
     .player-slot {
-        width: 75px;
-        height: 88px;
+        width: 90px;
+        height: 100px;
     }
 
     .shirt {
-        width: 60px;
-        height: 58px;
+        width: 72px;
+        height: 70px;
     }
 
     .player-name {
-        font-size: 11px;
-        max-width: 78px;
+        font-size: 13px;
+        max-width: 92px;
     }
 }
 

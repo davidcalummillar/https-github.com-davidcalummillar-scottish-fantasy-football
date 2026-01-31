@@ -572,8 +572,8 @@ body {
 
 /* === Player Slots === */
 .player-slot {
-    width: 58px;
-    height: 70px;
+    width: 68px;
+    height: 80px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -606,7 +606,7 @@ body {
 }
 
 .player-slot.empty .player-name {
-    font-size: 9.5px;
+    font-size: 10px;
     color: rgba(255, 255, 255, 0.6);
     text-transform: uppercase;
 }
@@ -614,14 +614,14 @@ body {
 /* Bench player text needs dark color on light background */
 .bench-slot .player-name {
     color: #333333;
-    font-size: 9.5px;
+    font-size: 10px;
     text-shadow: none;
 }
 
 /* === Shirt Container === */
 .shirt {
-    width: 48px;
-    height: 46px;
+    width: 56px;
+    height: 54px;
     position: relative;
     filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
 }
@@ -662,9 +662,9 @@ body {
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.85);
     color: white;
-    padding: 2px 6px;
+    padding: 2px 7px;
     border-radius: 4px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
@@ -675,11 +675,11 @@ body {
 
 /* Player Name */
 .player-name {
-    font-size: 9px;
+    font-size: 10.5px;
     font-weight: 600;
     text-align: center;
     margin-top: 2px;
-    max-width: 62px;
+    max-width: 72px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1031,39 +1031,40 @@ body {
 /* === Responsive Adjustments === */
 @media (max-width: 360px) {
     .player-slot {
-        width: 50px;
-        height: 62px;
+        width: 56px;
+        height: 68px;
     }
 
     .shirt {
-        width: 40px;
-        height: 38px;
+        width: 46px;
+        height: 44px;
     }
 
     .player-name {
-        font-size: 8px;
-        max-width: 50px;
+        font-size: 9px;
+        max-width: 58px;
     }
 
     .bench-slot {
-        width: 60px;
-        height: 75px;
+        width: 65px;
+        height: 80px;
     }
 }
 
 @media (min-width: 500px) {
     .player-slot {
-        width: 65px;
-        height: 78px;
+        width: 75px;
+        height: 88px;
     }
 
     .shirt {
-        width: 52px;
-        height: 50px;
+        width: 60px;
+        height: 58px;
     }
 
     .player-name {
-        font-size: 10px;
+        font-size: 11px;
+        max-width: 78px;
     }
 }
 

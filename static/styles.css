@@ -306,7 +306,7 @@ body {
 
 .bench-slot {
     width: 82px;
-    height: 95px;
+    height: 100px;
     background: rgba(0, 0, 0, 0.03);
     border: 2px dashed rgba(0, 0, 0, 0.15);
     border-radius: 12px;
@@ -316,6 +316,7 @@ body {
     justify-content: center;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
+    overflow: hidden;
 }
 
 .bench-slot:active {
@@ -615,6 +616,7 @@ body {
 .bench-slot .player-name {
     color: #333333;
     text-shadow: none;
+    max-width: 74px;
 }
 
 /* === Shirt Container === */
@@ -1046,7 +1048,7 @@ body {
 
     .bench-slot {
         width: 68px;
-        height: 80px;
+        height: 84px;
     }
 }
 

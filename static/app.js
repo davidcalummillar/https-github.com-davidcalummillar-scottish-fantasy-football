@@ -747,20 +747,30 @@ function getSwapTargets(squadPlayer, slotInfo, playerName) {
     const isBenched = slotInfo.type === 'BENCH';
 
     if (isBenched) {
-        // Bench player: find field slots that accept this player's position
+        // Bench player: find field slots AND other bench players to swap with
         const targets = [];
+
+        // 1. Field slots that accept this player's position
         for (const fieldSlot of allSlots) {
             const accepts = SLOT_ACCEPTS[fieldSlot.type] || [];
             if (!accepts.includes(squadPlayer.Position)) continue;
             const slotKey = `${fieldSlot.type}${fieldSlot.num}`;
             const occupant = squad.find(p => p.Slot === slotKey);
-            // Can swap into empty slot or swap with occupant whose position fits on bench
             if (!occupant || !occupant.Name) {
                 targets.push({ slot: fieldSlot, occupant: null, label: `${slotKey} (empty)` });
             } else {
                 targets.push({ slot: fieldSlot, occupant, label: `${slotKey} - ${occupant.Name}` });
             }
         }
+
+        // 2. Other bench players (swap bench positions to reorder)
+        const currentBenchNum = slotInfo.num;
+        const benchPlayers = squad.filter(p => p.Starting === 'FALSE' && p.Name && p.Name !== squadPlayer.Name);
+        for (const bp of benchPlayers) {
+            const bpNum = parseInt(bp.Slot.replace('BENCH', ''));
+            targets.push({ slot: { type: 'BENCH', num: bpNum }, occupant: bp, label: `BENCH - ${bp.Name} (${bp.Position})` });
+        }
+
         return targets;
     } else {
         // Field player: find bench AND field swap targets
@@ -808,7 +818,7 @@ function showFilledSlotModal(squadPlayer, slotInfo, playerName) {
     const isBenched = slotInfo.type === 'BENCH';
     const swapTargets = getSwapTargets(squadPlayer, slotInfo, playerName);
 
-    const swapLabel = isBenched ? 'Swap onto Field' : 'Swap / Move';
+    const swapLabel = 'Swap / Move';
     const swapOptions = swapTargets.length > 0
         ? `<div class="form-group">
             <label class="form-label">${swapLabel}</label>

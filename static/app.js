@@ -194,69 +194,76 @@ function generateSlotsForFormation(formation) {
 // === Smart Formation Change: Remap players to new slots ===
 function remapPlayersForFormation(squad, oldFormation, newFormation) {
     const newSlots = generateSlotsForFormation(newFormation);
-    const starters = squad.filter(p => p.Starting === 'TRUE');
+    const gkPlayer = squad.find(p => p.Position === 'GK' && p.Starting === 'TRUE');
+    const nonGkStarters = squad.filter(p => p.Starting === 'TRUE' && p.Position !== 'GK');
     const benchPlayers = squad.filter(p => p.Starting === 'FALSE');
 
-    // Group new slots by type
-    const available = {};
-    for (const s of newSlots) {
-        const key = s.type;
-        if (!available[key]) available[key] = [];
-        available[key].push(`${s.type}${s.num}`);
-    }
+    // Build available field slots (excluding GK which is handled separately)
+    const fieldSlots = newSlots.filter(s => s.type !== 'GK');
 
-    const remapped = [];
+    const slotAssignments = {}; // slotKey -> player
     const placed = new Set();
 
-    // First pass: try to place each starter into a matching slot
-    for (const player of starters) {
-        const pos = player.Position;
-        let slotAssigned = false;
+    // Step 1: Place GK
+    if (gkPlayer) {
+        slotAssignments['GK1'] = { ...gkPlayer, Slot: 'GK1', Starting: 'TRUE' };
+        placed.add(gkPlayer.Name);
+    }
 
-        // Check exact match slots first
-        for (const slotType of Object.keys(available)) {
-            const accepts = SLOT_ACCEPTS[slotType] || [];
-            if (accepts.includes(pos) && available[slotType].length > 0) {
-                const slotName = available[slotType].shift();
-                remapped.push({ ...player, Slot: slotName, Starting: 'TRUE' });
+    // Step 2: Exact-match pass — place starters into strict position slots (DEF, MID, FWD)
+    for (const slotType of ['DEF', 'MID', 'FWD']) {
+        const slotsOfType = fieldSlots.filter(s => s.type === slotType);
+        for (const slot of slotsOfType) {
+            const slotKey = `${slot.type}${slot.num}`;
+            if (slotAssignments[slotKey]) continue;
+            const player = nonGkStarters.find(p => !placed.has(p.Name) && p.Position === slotType);
+            if (player) {
+                slotAssignments[slotKey] = { ...player, Slot: slotKey, Starting: 'TRUE' };
                 placed.add(player.Name);
-                slotAssigned = true;
-                break;
             }
         }
-
-        // If couldn't place, move to bench
-        if (!slotAssigned) {
-            remapped.push({ ...player, Starting: 'FALSE' });
-            placed.add(player.Name);
-        }
     }
 
-    // Keep bench players as-is
-    for (const bp of benchPlayers) {
-        if (!placed.has(bp.Name)) {
-            remapped.push(bp);
-        }
-    }
-
-    // Reassign bench slot numbers (cap at MAX_BENCH)
-    let benchNum = 1;
-    const finalRemapped = [];
-    for (const p of remapped) {
-        if (p.Starting === 'FALSE' || (!p.Slot && p.Starting !== 'TRUE')) {
-            if (benchNum <= MAX_BENCH) {
-                p.Slot = `BENCH${benchNum}`;
-                p.Starting = 'FALSE';
-                benchNum++;
-                finalRemapped.push(p);
+    // Step 3: Flex-match pass — place remaining starters into flex slots (MFDF, FWMF)
+    for (const slotType of ['MFDF', 'FWMF']) {
+        const slotsOfType = fieldSlots.filter(s => s.type === slotType);
+        const accepts = SLOT_ACCEPTS[slotType];
+        for (const slot of slotsOfType) {
+            const slotKey = `${slot.type}${slot.num}`;
+            if (slotAssignments[slotKey]) continue;
+            const player = nonGkStarters.find(p => !placed.has(p.Name) && accepts.includes(p.Position));
+            if (player) {
+                slotAssignments[slotKey] = { ...player, Slot: slotKey, Starting: 'TRUE' };
+                placed.add(player.Name);
             }
-            // Drop excess bench players
-        } else {
-            finalRemapped.push(p);
         }
     }
 
-    return finalRemapped;
+    // Step 4: Collect unplaced starters — these overflow to bench
+    const unplacedStarters = nonGkStarters.filter(p => !placed.has(p.Name));
+    const allBenchPlayers = [...benchPlayers, ...unplacedStarters];
+
+    // Step 5: If bench is over capacity, try to promote bench players into empty field slots
+    const emptyFieldSlots = fieldSlots.filter(s => !slotAssignments[`${s.type}${s.num}`]);
+    const promoted = new Set();
+    for (const slot of emptyFieldSlots) {
+        const slotKey = `${slot.type}${slot.num}`;
+        const accepts = SLOT_ACCEPTS[slot.type];
+        const bp = allBenchPlayers.find(p => !promoted.has(p.Name) && accepts.includes(p.Position));
+        if (bp) {
+            slotAssignments[slotKey] = { ...bp, Slot: slotKey, Starting: 'TRUE' };
+            promoted.add(bp.Name);
+        }
+    }
+
+    // Step 6: Build final result — keep ALL players (never delete anyone)
+    const result = Object.values(slotAssignments);
+    const finalBench = allBenchPlayers.filter(bp => !promoted.has(bp.Name));
+    for (let i = 0; i < finalBench.length; i++) {
+        result.push({ ...finalBench[i], Slot: `BENCH${i + 1}`, Starting: 'FALSE' });
+    }
+
+    return result;
 }
 
 // === Rendering ===
@@ -756,15 +763,40 @@ function getSwapTargets(squadPlayer, slotInfo, playerName) {
         }
         return targets;
     } else {
-        // Field player: find bench players that can fill this slot
+        // Field player: find bench AND field swap targets
         const targets = [];
         const benchPlayers = squad.filter(p => p.Starting === 'FALSE');
         const accepts = SLOT_ACCEPTS[slotInfo.type] || [];
+
+        // 1. Bench players that can fill THIS slot
         for (const bp of benchPlayers) {
             if (bp.Name && accepts.includes(bp.Position)) {
-                targets.push({ slot: { type: 'BENCH', num: parseInt(bp.Slot.replace('BENCH', '')) }, occupant: bp, label: `${bp.Name} (${bp.Position})` });
+                targets.push({ slot: { type: 'BENCH', num: parseInt(bp.Slot.replace('BENCH', '')) }, occupant: bp, label: `BENCH - ${bp.Name} (${bp.Position})` });
             }
         }
+
+        // 2. Other field slots this player could move to
+        const currentSlotKey = `${slotInfo.type}${slotInfo.num}`;
+        for (const fieldSlot of allSlots) {
+            const targetSlotKey = `${fieldSlot.type}${fieldSlot.num}`;
+            if (targetSlotKey === currentSlotKey) continue; // skip self
+
+            const targetAccepts = SLOT_ACCEPTS[fieldSlot.type] || [];
+            if (!targetAccepts.includes(squadPlayer.Position)) continue; // player can't go there
+
+            const occupant = squad.find(p => p.Slot === targetSlotKey);
+
+            if (!occupant || !occupant.Name) {
+                // Empty field slot — player moves there, old slot becomes empty
+                targets.push({ slot: fieldSlot, occupant: null, label: `${targetSlotKey} (empty)` });
+            } else {
+                // Occupied — only offer if occupant can also fill the current slot (bidirectional)
+                if (accepts.includes(occupant.Position)) {
+                    targets.push({ slot: fieldSlot, occupant, label: `${targetSlotKey} - ${occupant.Name} (${occupant.Position})` });
+                }
+            }
+        }
+
         return targets;
     }
 }
@@ -776,7 +808,7 @@ function showFilledSlotModal(squadPlayer, slotInfo, playerName) {
     const isBenched = slotInfo.type === 'BENCH';
     const swapTargets = getSwapTargets(squadPlayer, slotInfo, playerName);
 
-    const swapLabel = isBenched ? 'Swap onto Field' : 'Swap with Bench';
+    const swapLabel = isBenched ? 'Swap onto Field' : 'Swap / Move';
     const swapOptions = swapTargets.length > 0
         ? `<div class="form-group">
             <label class="form-label">${swapLabel}</label>

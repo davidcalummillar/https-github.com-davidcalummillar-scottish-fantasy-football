@@ -306,7 +306,7 @@ function getDisplayScore(squadPlayer, squad, playerName) {
     const captain = squad.find(p => p.Captain === 'TRUE');
     const viceCaptain = squad.find(p => p.ViceCaptain === 'TRUE');
 
-    const captainPlayed = captain && captain.Score !== 'X' && captain.Score !== '';
+    const captainPlayed = captain && captain.Score !== 'X';
     const tcActive = getChipState(playerName, 'TC') === 'active';
 
     // Captain (or VC promoted to captain) gets 2x (or 3x with TC)
@@ -466,7 +466,7 @@ function calculateTeamScore(squad, playerName) {
     let total = 0;
     const captain = squad.find(p => p.Captain === 'TRUE');
     const viceCaptain = squad.find(p => p.ViceCaptain === 'TRUE');
-    const captainPlayed = captain && captain.Score !== 'X' && captain.Score !== '';
+    const captainPlayed = captain && captain.Score !== 'X';
     // Captain multiplier: TC active = x3, otherwise x2
     const captainMultiplier = tcActive ? 3 : 2;
     const usedSubs = new Set();
